@@ -1,0 +1,52 @@
+<main id="hud" aria-label="Anki Live HUD statistics">
+  <header class="hud-header">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">▥</span><span>LIVE HUD</span><span class="live-dot" title="Updates from your collection"></span></div>
+    <div class="actions">
+      <button data-command="settings" title="HUD settings" aria-label="HUD settings">⚙</button>
+      <button data-command="collapse" title="Collapse HUD" aria-label="Collapse HUD">›</button>
+      <button data-command="hide" title="Hide HUD · restore from Tools → Anki Live HUD" aria-label="Hide HUD">×</button>
+    </div>
+  </header>
+
+  <section class="hero" aria-labelledby="reviews-label">
+    <div class="eyebrow">YOUR STUDY DAY <span>· COLLECTION</span></div>
+    <div class="hero-label" id="reviews-label">Reviews today</div>
+    <div class="hero-number"><span id="reviews" data-counter="reviews">—</span><span id="delta-reviews" class="delta"></span></div>
+    <div class="subtle"><span id="unique_cards">—</span> unique cards <span class="separator">/</span> every answer counts</div>
+  </section>
+
+  <section class="goal-card" aria-label="Daily review goal">
+    <div class="section-line"><span class="section-title">Daily goal</span><span class="goal-fraction"><span id="goal-count">—</span><span class="subtle"> / <span id="goal">100</span></span></span></div>
+    <div class="progress-track" id="goal-meter" role="progressbar" aria-label="Daily goal progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="goal-fill"></div></div>
+    <div class="goal-bottom"><span id="goal-message">One answer at a time.</span><span id="progress" data-counter="progress">0%</span></div>
+    <div id="celebration" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>✧</span></div>
+  </section>
+
+  <section class="accuracy-card" title="Hard + Good + Easy / all rated answers today. This is not Anki True Retention.">
+    <div class="section-line"><span class="section-title">Answer accuracy</span><span class="accuracy-value"><span id="accuracy" data-counter="accuracy">—</span><span id="delta-accuracy" class="delta"></span></span></div>
+    <div class="accuracy-track"><div id="accuracy-fill"></div></div>
+    <div class="subtle definition">Hard, Good &amp; Easy ÷ all answers</div>
+  </section>
+
+  <section class="metric-grid" aria-label="Answer totals">
+    <div class="metric"><div class="metric-name"><span class="metric-dot green"></span>Correct answers</div><div class="metric-value"><span id="correct" data-counter="correct">—</span><span id="delta-correct" class="delta"></span></div></div>
+    <div class="metric"><div class="metric-name"><span class="metric-dot coral"></span>Again answers</div><div class="metric-value"><span id="again" data-counter="again">—</span><span id="delta-again" class="delta"></span></div></div>
+  </section>
+
+  <section class="remaining-card" title="Sum of Anki's new, learning and review queue counts in the selected study deck. Learning steps can keep this number unchanged or increase it.">
+    <div><div class="section-title">Queue remaining</div><div class="subtle deck-name" id="deck">Selected study deck</div></div>
+    <div class="remaining-value"><span id="remaining" data-counter="remaining">—</span><span id="delta-remaining" class="delta"></span></div>
+  </section>
+
+  <section id="distribution" aria-label="Today's answer distribution">
+    <div class="section-title distribution-title">Answer mix</div>
+    <div class="distribution-track" aria-hidden="true"><span id="mix-again"></span><span id="mix-hard"></span><span id="mix-good"></span><span id="mix-easy"></span></div>
+    <div class="distribution-labels"><div><i class="coral"></i>Again<b id="mix-count-again">0</b></div><div><i class="amber"></i>Hard<b id="mix-count-hard">0</b></div><div><i class="green"></i>Good<b id="mix-count-good">0</b></div><div><i class="blue"></i>Easy<b id="mix-count-easy">0</b></div></div>
+  </section>
+
+  <footer>
+    <div class="last-answer"><span class="subtle">LATEST ANSWER</span><span id="last-answer">Ready when you are</span></div>
+    <p class="footnote">Small steps. Visible progress.</p>
+    <span id="status" class="status" role="status" aria-live="polite">Loading collection statistics…</span>
+  </footer>
+</main>

@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "visible": true,
+  "collapsed": false,
+  "width": 304,
+  "daily_goal": 100,
+  "animations": true,
+  "compact": false,
+  "theme": "auto",
+  "show_distribution": true
+}

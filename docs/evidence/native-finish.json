@@ -1,0 +1,37 @@
+{
+  "version": "26.09.3",
+  "qt": "6.11.2",
+  "python": "3.13.15",
+  "phase": "finish",
+  "checks": [
+    "isolated profile",
+    "add-on loaded",
+    "persistent sidebar visible",
+    "collection values rendered",
+    "exhausted queue hides dock safely",
+    "final rating retained across deck switch",
+    "no Python or JavaScript errors"
+  ],
+  "snapshot": {
+    "again": 1,
+    "hard": 1,
+    "good": 4,
+    "easy": 2,
+    "unique_cards": 8,
+    "last_rating": 4,
+    "reviews": 8,
+    "correct": 7,
+    "accuracy": 87.5,
+    "goal": 4,
+    "progress": 100.0,
+    "day": 1792720800000,
+    "remaining": 15,
+    "queue": {
+      "new": 9,
+      "learning": 6,
+      "review": 0
+    },
+    "deck": "Everyday English"
+  },
+  "outcome": "passed"
+}

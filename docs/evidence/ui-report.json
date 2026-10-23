@@ -1,0 +1,28 @@
+{
+  "outcome": "passed",
+  "checks": [
+    "empty accuracy is unavailable",
+    "all ratings counted",
+    "accuracy",
+    "correct classification",
+    "delta visible",
+    "goal crossing celebrates",
+    "rapid answers converge",
+    "progress capped",
+    "undo converges",
+    "undo restores last answer",
+    "refresh does not replay celebration",
+    "compact hides footer",
+    "disabled animations update immediately",
+    "disabled animations clear deltas",
+    "OS reduced motion updates immediately",
+    "OS reduced motion disables animations",
+    "distribution visibility",
+    "day rollover resets without tween",
+    "narrow layout has no horizontal overflow",
+    "no JavaScript errors",
+    "no network requests"
+  ],
+  "errors": [],
+  "browser": "143.0.7499.4"
+}

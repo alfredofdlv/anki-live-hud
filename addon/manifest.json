@@ -1,0 +1,8 @@
+{
+  "package": "anki_live_hud",
+  "name": "Anki Live HUD",
+  "author": "Anki Live HUD contributors",
+  "version": "0.1.0-rc.1",
+  "human_version": "0.1.0-rc.1",
+  "min_point_version": 260903
+}

@@ -1,0 +1,38 @@
+{
+  "version": "26.09.3",
+  "qt": "6.11.2",
+  "python": "3.13.15",
+  "phase": "restart",
+  "checks": [
+    "isolated profile",
+    "add-on loaded",
+    "persistent sidebar visible",
+    "collection values rendered",
+    "statistics survive restart",
+    "settings survive restart",
+    "resized width survives restart",
+    "no Python or JavaScript errors"
+  ],
+  "snapshot": {
+    "again": 1,
+    "hard": 1,
+    "good": 4,
+    "easy": 1,
+    "unique_cards": 7,
+    "last_rating": 3,
+    "reviews": 7,
+    "correct": 6,
+    "accuracy": 85.71428571428571,
+    "goal": 4,
+    "progress": 100.0,
+    "day": 1792720800000,
+    "remaining": 15,
+    "queue": {
+      "new": 9,
+      "learning": 6,
+      "review": 0
+    },
+    "deck": "Everyday English"
+  },
+  "outcome": "passed"
+}

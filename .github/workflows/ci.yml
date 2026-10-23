@@ -1,0 +1,48 @@
+name: Test and build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  unit-and-package:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.10', '3.12']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install pytest ruff tzdata
+      - run: python -m ruff check addon tests scripts
+      - run: python -m ruff format --check addon tests scripts
+      - run: python -m pytest -q
+      - run: python scripts/build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: anki-live-hud-${{ matrix.os }}-${{ matrix.python }}
+          path: dist/*
+
+  anki-and-browser:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install "aqt[qt]==26.9.3" pytest tzdata pillow playwright
+      - run: python -m playwright install chromium
+      - run: python -m pytest -q
+      - run: python scripts/test_ui.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-test-results
+          path: test-results/ui
