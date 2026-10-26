@@ -9,6 +9,10 @@ from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME = {
+    "insights.py",
+    "feedback.py",
+    "ui/__init__.py",
+    "ui/answer_feedback.py",
     "__init__.py",
     "hooks.py",
     "settings.py",

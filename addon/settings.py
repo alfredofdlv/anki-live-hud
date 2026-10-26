@@ -12,6 +12,10 @@ DEFAULTS = {
     "compact": False,
     "theme": "auto",
     "show_distribution": True,
+    "answer_feedback": True,
+    "feedback_duration": 2400,
+    "show_streak": True,
+    "show_recent_chart": True,
 }
 
 
@@ -25,7 +29,11 @@ def validated(raw: dict | None) -> dict:
             result[key] = value if isinstance(value, bool) else default
         elif isinstance(default, int):
             if isinstance(value, int) and not isinstance(value, bool):
-                low, high = (240, 480) if key == "width" else (1, 100000)
+                low, high = {
+                    "width": (240, 480),
+                    "daily_goal": (1, 100000),
+                    "feedback_duration": (1200, 5000),
+                }[key]
                 result[key] = max(low, min(high, value))
         elif key == "theme" and value in ("auto", "light", "dark"):
             result[key] = value
@@ -50,7 +58,9 @@ def show_settings(controller) -> None:
     layout = QVBoxLayout(dialog)
     explanation = QLabel(
         "Daily statistics cover the whole collection.\n"
-        "Queue remaining follows the selected study deck."
+        "Queue remaining follows the selected study deck.\n\n"
+        "Impact feedback appears over the review area after each answer. "
+        "Anki/OS reduced motion keeps the notification visible without movement."
     )
     explanation.setWordWrap(True)
     layout.addWidget(explanation)
@@ -63,6 +73,9 @@ def show_settings(controller) -> None:
         ("animations", "Animate changes"),
         ("compact", "Compact layout"),
         ("show_distribution", "Show answer distribution"),
+        ("answer_feedback", "Show impact feedback over the review area"),
+        ("show_streak", "Show answer streak and today's best"),
+        ("show_recent_chart", "Show recent-answer chart"),
     ):
         box = QCheckBox(label)
         box.setChecked(controller.config[key])
@@ -71,6 +84,7 @@ def show_settings(controller) -> None:
     for key, label, low, high in (
         ("daily_goal", "Daily goal (answer events)", 1, 100000),
         ("width", "Sidebar width (pixels)", 240, 480),
+        ("feedback_duration", "Impact feedback duration (milliseconds)", 1200, 5000),
     ):
         spin = QSpinBox()
         spin.setRange(low, high)

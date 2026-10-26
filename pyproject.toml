@@ -1,6 +1,6 @@
 [project]
 name = "anki-live-hud"
-version = "0.1.0rc1"
+version = "0.2.0rc2"
 description = "A persistent, animated statistics sidebar for Anki Desktop"
 requires-python = ">=3.10"
 license = "MIT"

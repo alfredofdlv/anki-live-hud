@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 
-def prepare() -> Path:
+def prepare() -> tuple[Path, Path]:
     from anki.collection import Collection
     from anki.lang import set_lang
     from aqt.profiles import ProfileManager
@@ -67,7 +67,8 @@ def prepare() -> Path:
     col.close()
     addon_path = base / "addons21/anki_live_hud"
     addon_path.mkdir(parents=True)
-    with ZipFile(build()) as archive:
+    package = build()
+    with ZipFile(package) as archive:
         archive.extractall(addon_path)
     driver = base / "addons21/hud_test_driver"
     driver.mkdir()
@@ -80,7 +81,7 @@ def prepare() -> Path:
         "gui_hooks.profile_did_open.append(lambda: QTimer.singleShot(1200, run))\n",
         encoding="utf-8",
     )
-    return base
+    return base, package
 
 
 def main() -> None:
@@ -89,11 +90,12 @@ def main() -> None:
     args = parser.parse_args()
     output = ROOT / "test-results/native"
     output.mkdir(parents=True, exist_ok=True)
-    base = prepare()
+    base, package = prepare()
     env = dict(os.environ)
     env.update(
         {
             "HUD_TEST_ROOT": str(ROOT),
+            "HUD_TEST_PACKAGE": str(package),
             "HUD_TEST_OUTPUT": str(output),
             "QT_QPA_PLATFORM": "windows" if sys.platform == "win32" else "offscreen",
             "PYTHONUTF8": "1",

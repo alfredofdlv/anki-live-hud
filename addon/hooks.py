@@ -26,6 +26,7 @@ from aqt.webview import AnkiWebView
 from .settings import show_settings, validated
 from .state import RevisionGate
 from .statistics import collection_snapshot
+from .ui.answer_feedback import AnswerFeedback
 
 log = logging.getLogger("anki_live_hud")
 WEB = Path(__file__).parent / "web"
@@ -44,6 +45,8 @@ class HudController(QObject):
         self.rail = None
         self.ready = False
         self.snapshot = None
+        self.feedback = None
+        self.system_reduced_motion = True
         self.effective_collapsed = None
         self.pending_reason = "sync"
         self._layout_busy = False
@@ -157,6 +160,10 @@ class HudController(QObject):
             self.toggle_visible(False)
         elif command == "hud:settings":
             show_settings(self)
+        elif command in ("hud:motion:reduce", "hud:motion:full"):
+            self.system_reduced_motion = command == "hud:motion:reduce"
+            self._configure_feedback()
+            return None
         if self.mw.state == "review":
             self.mw.web.setFocus()
         return None
@@ -173,13 +180,29 @@ class HudController(QObject):
         self.request_refresh()
 
     def on_answer(self, reviewer, card, ease: int) -> None:
+        # This hook runs only after Anki commits the answer. The visible +1 is
+        # feedback for that event; totals/progress still come from the database.
+        if self.active() and self.config["answer_feedback"]:
+            try:
+                if self.feedback is None:
+                    self.feedback = AnswerFeedback(self.mw.web)
+                self._configure_feedback()
+                self.feedback.show_answer(ease)
+            except Exception:
+                # Optional visual feedback must never interrupt Anki's nextCard().
+                log.exception("Could not display answer feedback")
+                if self.feedback:
+                    self.feedback.dismiss()
         self.request_refresh("answer")
 
     def on_operation(self, changes, handler) -> None:
         # Includes undo/redo, bury, suspend, deck changes and database edits.
+        if self.feedback and handler is not self.mw.reviewer:
+            self.feedback.dismiss()
         self.request_refresh()
 
     def on_theme(self) -> None:
+        self._configure_feedback()
         self._push()
 
     def on_end(self) -> None:
@@ -187,6 +210,8 @@ class HudController(QObject):
         self.refresh_timer.stop()
         if self.dock:
             self.dock.hide()
+        if self.feedback:
+            self.feedback.dismiss()
 
     def on_collection_close(self, col) -> None:
         self.on_end()
@@ -205,6 +230,10 @@ class HudController(QObject):
             self.dock.deleteLater()
         self.dock = self.web = self.rail = None
         self.effective_collapsed = None
+        if self.feedback:
+            self.feedback.deleteLater()
+            self.feedback = None
+        self.system_reduced_motion = True
 
     def _update_visibility(self) -> None:
         if self.active():
@@ -241,6 +270,8 @@ class HudController(QObject):
                     self.pending_reason = reason
                 self.refresh_timer.start(0)
                 return
+            if self.feedback and reason == "answer":
+                self.feedback.confirm(snapshot, self.snapshot)
             self.snapshot = snapshot
             self._push(reason)
 
@@ -274,10 +305,26 @@ class HudController(QObject):
         }
         self.web.eval("window.AnkiLiveHUD.update(" + json.dumps(payload) + ")")
 
+    def _configure_feedback(self) -> None:
+        if not self.feedback:
+            return
+        if not self.config["answer_feedback"]:
+            self.feedback.dismiss()
+        theme = self.config["theme"]
+        dark = theme_manager.night_mode if theme == "auto" else theme == "dark"
+        self.feedback.configure(
+            animated=self.config["animations"]
+            and not self.mw.pm.reduce_motion()
+            and not self.system_reduced_motion,
+            dark=dark,
+            duration=self.config["feedback_duration"],
+        )
+
     def save_config(self, raw: dict) -> None:
         self.config = validated(raw)
         self.mw.addonManager.writeConfig(self.module, self.config)
         self.visible_action.setChecked(self.config["visible"])
+        self._configure_feedback()
         self._update_visibility()
         self._layout(force=True)
         self._push()

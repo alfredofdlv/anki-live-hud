@@ -83,3 +83,21 @@ def test_snapshot_is_read_only_and_survives_reopen(col):
     col.reopen()
     assert col.path == path
     assert collection_snapshot(col, 10) == snapshot
+
+
+def test_real_undo_redo_restores_streaks_and_chart(col):
+    for rating in [3, 3, 2, 4, 1, 3, 3]:
+        answer(col, rating)
+    insight = collection_snapshot(col, 100)["insights"]
+    assert (insight["streak"], insight["best_streak"], insight["good_streak"]) == (2, 4, 2)
+    assert insight["recent"] == [3, 3, 2, 4, 1, 3, 3]
+    col.undo()
+    assert collection_snapshot(col, 100)["insights"]["good_streak"] == 1
+    col.undo()
+    assert collection_snapshot(col, 100)["insights"]["streak"] == 0
+    col.undo()
+    restored = collection_snapshot(col, 100)["insights"]
+    assert restored["streak"] == restored["best_streak"] == 4
+    assert restored["recent"] == [3, 3, 2, 4]
+    col.redo()
+    assert collection_snapshot(col, 100)["insights"]["streak"] == 0

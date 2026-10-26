@@ -44,6 +44,54 @@ button { font: inherit; }
 .goal-bottom { font-size: 10px; gap: 8px; color: var(--muted); }
 #progress { color: var(--accent); font-weight: 700; }
 .accuracy-card { margin: 22px 0 16px; }
+.streak-card { display: grid; grid-template-columns: 36px 1fr auto; gap: 6px 10px; align-items: center; margin-top: 15px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: linear-gradient(125deg,var(--surface),var(--accent-bg)); }
+.streak-mark { display:grid; place-items:center; width:34px; height:34px; color:var(--green); font-size:27px; border:1px solid var(--border); border-radius:50%; }
+.streak-main .eyebrow { display:block; margin:0; font-size:8px; letter-spacing:1px; }
+.streak-number { display:flex; align-items:baseline; gap:7px; }
+#streak { font-size:30px; line-height:1.15; font-weight:700; color:var(--green); }
+.streak-record { text-align:right; }
+.streak-record .subtle { display:block; font-size:8px; }
+.streak-record strong { font-size:20px; font-variant-numeric:tabular-nums; }
+.streak-bottom { grid-column:1/-1; display:flex; justify-content:space-between; gap:6px; margin-top:5px; color:var(--muted); font-size:9px; }
+.streak-bottom b { color:var(--text); font-weight:650; }
+.streak-card.bump .streak-mark { animation:streak-pop 500ms ease-out; }
+.streak-card[hidden], .recent-chart[hidden] { display:none; }
+@keyframes streak-pop { 0% { transform:scale(.8); } 45% { transform:scale(1.2) rotate(18deg); } 100% { transform:scale(1); } }
+.recent-chart { margin-top:16px; padding-top:15px; border-top:1px solid var(--border); }
+.recent-chart .subtle { font-size:8px; }
+.sparkline-wrap { position:relative; height:48px; margin:11px 0 10px; }
+#accuracy-chart { display:block; width:100%; height:48px; overflow:visible; }
+.chart-grid { fill:none; stroke:var(--border); stroke-width:1; stroke-dasharray:2 5; }
+.chart-area { fill:var(--green); opacity:.09; }
+.chart-line { fill:none; stroke:var(--green); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.chart-tip { fill:var(--green); stroke:var(--bg); stroke-width:2; }
+.chart-empty { position:absolute; inset:0; display:grid; place-items:center; font-size:10px; color:var(--muted); }
+.chart-empty[hidden] { display:none; }
+.answer-timeline { display:grid; grid-template-columns:repeat(24,minmax(0,1fr)); gap:3px; }
+.answer-cell { display:block; height:12px; border-radius:3px; background:var(--track); }
+.answer-cell[data-rating="1"] { background:var(--coral); }.answer-cell[data-rating="2"] { background:var(--amber); }.answer-cell[data-rating="3"] { background:var(--green); }.answer-cell[data-rating="4"] { background:var(--blue); }
+.answer-cell.latest { animation:answer-arrive 450ms ease-out; }
+@keyframes answer-arrive { from { transform:translateY(-5px) scale(.75); opacity:.3; } to { transform:none; opacity:1; } }
+.chart-caption { display:flex; justify-content:space-between; gap:5px; margin-top:7px; font-size:8px; color:var(--muted); }
+:root[data-compact="true"] .streak-card { padding:9px; margin-top:10px; }
+:root[data-compact="true"] .recent-chart { margin-top:10px; padding-top:10px; }
+:root[data-insights="true"] #hud { padding:13px 16px; }
+:root[data-insights="true"] .hud-header { margin-bottom:16px; }
+:root[data-insights="true"] .eyebrow { margin-bottom:8px; }
+:root[data-insights="true"] #reviews { font-size:46px; }
+:root[data-insights="true"] .goal-card { margin-top:14px; padding:11px; }
+:root[data-insights="true"] .accuracy-card { margin:13px 0 10px; }
+:root[data-insights="true"] .metric { padding:9px 10px 7px; }
+:root[data-insights="true"] .metric-value { font-size:23px; margin-top:3px; }
+:root[data-insights="true"] .remaining-card { padding:11px 0; }
+:root[data-insights="true"] .distribution-title { margin:12px 0 8px; }
+:root[data-insights="true"] footer { margin-top:12px; }
+:root[data-insights="true"] .footnote { display:none; }
+:root[data-insights="true"] .streak-card { padding:9px 10px; gap:3px 9px; margin-top:11px; }
+:root[data-insights="true"] .streak-main .eyebrow { margin-bottom:0; }
+:root[data-insights="true"] .sparkline-wrap, :root[data-insights="true"] #accuracy-chart { height:34px; }
+:root[data-insights="true"] .sparkline-wrap { margin:9px 0; }
+:root[data-insights="true"] .recent-chart { margin-top:12px; padding-top:11px; }
 .accuracy-value { display: flex; align-items: baseline; gap: 6px; }
 #accuracy { font-size: 18px; font-weight: 650; }
 .accuracy-track { height: 3px; margin: 9px 0 7px; }
