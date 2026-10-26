@@ -30,6 +30,15 @@ def test_milestone_is_an_actual_review_count():
     assert feedback_details(snapshot(25), snapshot(24))["headline"] == "25 REVIEWS TODAY"
 
 
+def test_answer_streak_medal_uses_all_passing_ratings_and_not_refreshes():
+    before = {**snapshot(7), "insights": {"streak": 4}}
+    current = {**snapshot(8), "insights": {"streak": 5}}
+    assert feedback_details(current, before)["headline"] == "5 ANSWER STREAK"
+    assert not feedback_details(current, current)["special"]
+    reset = {**snapshot(9), "insights": {"streak": 0}}
+    assert feedback_details(reset, current)["headline"] == "REVIEW RECORDED"
+
+
 def test_goal_change_and_new_day_do_not_invent_a_goal_crossing():
     assert feedback_details(snapshot(51, 50), snapshot(50, 100))["headline"] == "REVIEW RECORDED"
     assert feedback_details(snapshot(1, 1, 2), snapshot(99))["headline"] == "REVIEW RECORDED"

@@ -22,6 +22,16 @@
     <div id="celebration" aria-hidden="true"><span>✦</span><span>✧</span><span>✦</span><span>✧</span></div>
   </section>
 
+  <section id="streak-card" class="streak-card" aria-label="Today's answer streak"
+    title="Consecutive Hard, Good or Easy answers in this study day. Again starts a fresh run. Good in a row counts only consecutive Good ratings.">
+    <div class="streak-mark" aria-hidden="true">✦</div>
+    <div class="streak-main"><span class="eyebrow">ANSWER STREAK</span>
+      <div class="streak-number"><span id="streak" data-counter="streak">0</span><span class="subtle">in a row</span></div>
+    </div>
+    <div class="streak-record"><span class="subtle">BEST TODAY</span><strong id="best-streak">0</strong></div>
+    <div class="streak-bottom"><span>Hard · Good · Easy</span><span><b id="good-streak">0</b> Good in a row</span></div>
+  </section>
+
   <section class="accuracy-card" title="Hard + Good + Easy / all rated answers today. This is not Anki True Retention.">
     <div class="section-line"><span class="section-title">Answer accuracy</span><span class="accuracy-value"><span id="accuracy" data-counter="accuracy">—</span><span id="delta-accuracy" class="delta"></span></span></div>
     <div class="accuracy-track"><div id="accuracy-fill"></div></div>
@@ -42,6 +52,21 @@
     <div class="section-title distribution-title">Answer mix</div>
     <div class="distribution-track" aria-hidden="true"><span id="mix-again"></span><span id="mix-hard"></span><span id="mix-good"></span><span id="mix-easy"></span></div>
     <div class="distribution-labels"><div><i class="coral"></i>Again<b id="mix-count-again">0</b></div><div><i class="amber"></i>Hard<b id="mix-count-hard">0</b></div><div><i class="green"></i>Good<b id="mix-count-good">0</b></div><div><i class="blue"></i>Easy<b id="mix-count-easy">0</b></div></div>
+  </section>
+
+  <section id="recent-chart" class="recent-chart" aria-label="Recent answer history">
+    <div class="section-line"><span class="section-title">Review rhythm</span><span class="subtle">LAST 24 ANSWERS</span></div>
+    <div class="sparkline-wrap">
+      <svg id="accuracy-chart" viewBox="0 0 264 48" role="img" aria-label="Rolling answer accuracy, up to five answers per point" preserveAspectRatio="none">
+        <path class="chart-grid" d="M0 4H264M0 24H264M0 44H264"/>
+        <path id="accuracy-area" class="chart-area" d=""/>
+        <path id="accuracy-line" class="chart-line" d=""/>
+        <circle id="accuracy-tip" class="chart-tip" r="3" cx="0" cy="44" visibility="hidden"/>
+      </svg>
+      <span id="chart-empty" class="chart-empty">Your next answers will appear here</span>
+    </div>
+    <div id="answer-timeline" class="answer-timeline" role="list" aria-label="Last 24 ratings, oldest to newest"></div>
+    <div class="chart-caption"><span>Oldest → newest</span><span>Line: rolling 5-answer accuracy</span></div>
   </section>
 
   <footer>

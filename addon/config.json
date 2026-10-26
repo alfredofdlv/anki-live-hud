@@ -9,5 +9,7 @@
   "theme": "auto",
   "show_distribution": true,
   "answer_feedback": true,
-  "feedback_duration": 2400
+  "feedback_duration": 2400,
+  "show_streak": true,
+  "show_recent_chart": true
 }

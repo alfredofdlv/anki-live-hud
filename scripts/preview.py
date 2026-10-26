@@ -37,12 +37,23 @@ body {display:flex;justify-content:center;gap:30px;padding:30px!important;min-he
         + "<script>"
         + web.joinpath("hud.js").read_text(encoding="utf-8")
         + """</script><script>
-const cfg = {theme:'dark',animations:true,compact:false,show_distribution:true};
+const cfg = {theme:'dark',animations:true,compact:false,show_distribution:true,
+ show_streak:true,show_recent_chart:true};
 let history=[];
 function stats(){
  const counts=[0,0,0,0]; history.forEach(x=>counts[x-1]++);
  const n=history.length, correct=n-counts[0];
+ let streak=0,best_streak=0,good_streak=0;
+ const rolling=[];
+ history.forEach((rating,index)=>{
+   streak=rating>1?streak+1:0; best_streak=Math.max(best_streak,streak);
+   good_streak=rating===3?good_streak+1:0;
+   const window=history.slice(Math.max(0,index-4),index+1);
+   rolling.push(window.filter(value=>value>1).length/window.length*100);
+ });
  return {again:counts[0],hard:counts[1],good:counts[2],easy:counts[3],reviews:n,correct,
+ insights:{streak,best_streak,good_streak,recent:history.slice(-24),
+ rolling_accuracy:rolling.slice(-24),rolling_window:5},
  accuracy:n?correct/n*100:null,unique_cards:Math.min(n,8),last_rating:history.at(-1)||null,
  remaining:Math.max(0,16-n+counts[0]),day:1,goal:10,
  progress:Math.min(100,n*10),deck:'Everyday English'};

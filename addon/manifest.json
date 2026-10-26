@@ -2,7 +2,7 @@
   "package": "anki_live_hud",
   "name": "Anki Live HUD",
   "author": "Anki Live HUD contributors",
-  "version": "0.2.0-rc.1",
-  "human_version": "0.2.0-rc.1",
+  "version": "0.2.0-rc.2",
+  "human_version": "0.2.0-rc.2",
   "min_point_version": 260903
 }

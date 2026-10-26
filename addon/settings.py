@@ -14,6 +14,8 @@ DEFAULTS = {
     "show_distribution": True,
     "answer_feedback": True,
     "feedback_duration": 2400,
+    "show_streak": True,
+    "show_recent_chart": True,
 }
 
 
@@ -72,6 +74,8 @@ def show_settings(controller) -> None:
         ("compact", "Compact layout"),
         ("show_distribution", "Show answer distribution"),
         ("answer_feedback", "Show impact feedback over the review area"),
+        ("show_streak", "Show answer streak and today's best"),
+        ("show_recent_chart", "Show recent-answer chart"),
     ):
         box = QCheckBox(label)
         box.setChecked(controller.config[key])

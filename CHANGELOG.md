@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0-rc.2 — 2026-10-26 (development preview)
+
+- Add an animated answer-streak card: current Hard/Good/Easy run, best today and Good-only run.
+- Add a categorical timeline of the last 24 rated answers and a rolling five-answer accuracy chart.
+- Derive exact full-day streaks from rated review-log entries; no 24-answer cap on streak length.
+- Restore streaks and graphs after undo/redo, deck changes and restart; respect Anki's study day.
+- Add native streak medals at 5, 10, 20, 50 and 100 consecutive passing answers.
+- Add independent display switches for the streak card and recent-answer chart.
+
 ## 0.2.0-rc.1 — 2026-10-26 (development preview)
 
 - Add a prominent native feedback layer over the review area after each committed rating.

@@ -177,6 +177,15 @@ def run() -> None:
                 check("accuracy 75 percent", hud.snapshot["accuracy"] == 75)
                 check("goal reached", hud.snapshot["progress"] == 100)
                 check(
+                    "native chart and streak use collection data",
+                    hud.snapshot["insights"]["recent"] == [1, 2, 3, 4]
+                    and hud.snapshot["insights"]["streak"] == 3,
+                )
+                check(
+                    "native streak appears in DOM",
+                    await js(hud.web, "document.getElementById('streak').textContent") == "3",
+                )
+                check(
                     "goal medal comes from committed totals",
                     hud.feedback.details["headline"] == "DAILY GOAL COMPLETE",
                 )
@@ -215,6 +224,10 @@ def run() -> None:
                         check(
                             "rapid answers reuse one overlay", id(hud.feedback) == feedback_identity
                         )
+                        check(
+                            "five-answer streak earns a real medal",
+                            hud.feedback.details["headline"] == "5 ANSWER STREAK",
+                        )
                     elif count == 7:
                         check("reduced motion keeps impact visible", hud.feedback.isVisible())
                         check("reduced motion stops native animation", not hud.feedback.animated)
@@ -230,6 +243,11 @@ def run() -> None:
                 await wait(lambda: hud.snapshot["reviews"] == 7, "undo")
                 check("undo dismisses stale reward", not hud.feedback.isVisible())
                 check("undo accuracy restored", abs(hud.snapshot["accuracy"] - 600 / 7) < 0.001)
+                check(
+                    "native undo restores answer streak",
+                    hud.snapshot["insights"]["streak"] == 6
+                    and hud.snapshot["insights"]["good_streak"] == 3,
+                )
                 await settle()
                 check(
                     "undo rendered",
@@ -250,6 +268,7 @@ def run() -> None:
                 theme_manager.set_night_mode(False)
                 aqt.gui_hooks.theme_did_change()
                 await capture("reviewer-light")
+                mw.grab().save(str(output / "insights-light.png"))
                 hud.save_config({**hud.config, "theme": "auto"})
                 theme_manager.set_night_mode(True)
                 aqt.gui_hooks.theme_did_change()
@@ -295,6 +314,7 @@ def run() -> None:
                 check("session end hides panel", not hud.dock.isVisible())
                 mw.moveToState("review")
                 await wait(lambda: hud.dock.isVisible(), "resume review")
+                await wait(lambda: hud.snapshot["insights"]["streak"] == 6, "restore daily run")
                 check(
                     "resume preserves document",
                     await js(hud.web, "window.__hudIdentity") == identity,

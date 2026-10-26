@@ -13,6 +13,8 @@ Use **Tools → Anki Live HUD → Settings…** for a graphical editor.
 - `show_distribution`: show Again / Hard / Good / Easy counts.
 - `answer_feedback`: show the native impact layer over the review area after a committed answer.
 - `feedback_duration`: how long that layer remains visible, 1200–5000 milliseconds (default 2400).
+- `show_streak`: show the current Hard/Good/Easy run, best run today and exact Good run.
+- `show_recent_chart`: show the last 24 ratings and rolling five-answer accuracy line.
 
 Impact feedback is a separate mouse-transparent native layer: a pop-in medal,
 rating, +1 review and real daily-goal progress. Rapid answers replace the current
@@ -21,6 +23,11 @@ does not depend on choosing Easy; all four ratings record one review.
 With animations disabled or reduced motion enabled, the notification still
 appears, but stays stationary until it disappears. Disable `answer_feedback`
 to keep only the quiet sidebar.
+
+Runs cover the collection's current Anki study day, not a number of calendar days.
+Again resets the passing run; any non-Good rating resets the exact Good run.
+Undo, deck switching and restart reconstruct these values from the review log.
+The chart's x-axis is answer order, not time. Its percentage is not True Retention.
 
 Daily figures cover the whole collection and use Anki's study-day rollover.
 Queue remaining covers the selected study deck, including its subdecks, using the scheduler's queue counts.

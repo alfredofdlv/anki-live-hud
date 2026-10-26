@@ -6,6 +6,8 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta, tzinfo
 from typing import Protocol
 
+from .insights import RATED_WHERE, read_insights
+
 RATING_NAMES = {1: "Again", 2: "Hard", 3: "Good", 4: "Easy"}
 
 
@@ -67,7 +69,7 @@ class DailyStats:
 def read_daily(db: Database, start_ms: int, end_ms: int) -> DailyStats:
     # revlog.id is the millisecond primary key. Restrict every scan to this study day.
     # Types 0/1/2/3: learning/review/relearning/filtered. 4/5 are manual/rescheduled.
-    predicate = "id >= ? and id < ? and ease between 1 and 4 and type between 0 and 3"
+    predicate = RATED_WHERE
     rows = db.all(
         f"select ease, count(*) from revlog where {predicate} group by ease",
         start_ms,
@@ -99,6 +101,7 @@ def collection_snapshot(col, goal: int) -> dict:
     new, learning, review = col.sched.counts()
     return {
         **daily.payload(goal),
+        "insights": read_insights(col.db, start, end),
         "day": start,
         "remaining": new + learning + review,
         "queue": {"new": new, "learning": learning, "review": review},

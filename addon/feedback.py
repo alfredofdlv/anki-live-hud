@@ -12,14 +12,19 @@ def feedback_details(current: dict, previous: dict | None) -> dict:
     start = previous["progress"] if same_goal else 0.0
     reached = bool(same_goal and previous["reviews"] < current["goal"] <= current["reviews"])
     milestone = current["reviews"] in MILESTONES
+    run = current.get("insights", {}).get("streak", 0)
+    previous_run = previous.get("insights", {}).get("streak", 0) if same_goal else 0
+    streak_medal = bool(same_goal and run in {5, 10, 20, 50, 100} and run > previous_run)
     headline = "REVIEW RECORDED"
     if reached:
         headline = "DAILY GOAL COMPLETE"
     elif milestone:
         headline = f"{current['reviews']:,} REVIEWS TODAY"
+    elif streak_medal:
+        headline = f"{run} ANSWER STREAK"
     return {
         "headline": headline,
-        "special": reached or milestone,
+        "special": reached or milestone or streak_medal,
         "progress_from": start,
         "progress": current["progress"],
         "summary": f"{current['reviews']:,} / {current['goal']:,} daily reviews",

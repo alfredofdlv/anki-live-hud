@@ -58,6 +58,18 @@ def main() -> None:
         check("all ratings counted", text("reviews") == "4")
         check("accuracy", text("accuracy") == "75.0%")
         check("correct classification", text("correct") == "3" and text("again") == "1")
+        check("passing streak counts Hard Good Easy", text("streak") == "3")
+        check("exact Good run resets on Easy", text("good-streak") == "0")
+        check("today's longest answer run", text("best-streak") == "3")
+        check(
+            "categorical answer timeline",
+            page.locator("#answer-timeline [role=listitem]").count() == 4,
+        )
+        check(
+            "real SVG accuracy graph rendered",
+            bool(page.locator("#accuracy-line").get_attribute("d"))
+            and not page.locator("#chart-empty").is_visible(),
+        )
         check("delta visible", page.locator("#delta-reviews").inner_text() == "+1")
         page.locator("#hud").screenshot(path=output / "dark.png")
         # Retarget while the first tween is in flight; final values must converge.
@@ -69,12 +81,35 @@ def main() -> None:
         settled_reviews(24)
         check("rapid answers converge", text("correct") == "23")
         check(
+            "long streak exceeds chart capacity correctly",
+            text("streak") == "23" and text("best-streak") == "23" and text("good-streak") == "20",
+        )
+        check(
+            "chart limited to 24 actual answers",
+            page.locator("#answer-timeline [role=listitem]").count() == 24,
+        )
+        check(
             "progress capped", page.locator("#goal-meter").get_attribute("aria-valuenow") == "100"
         )
         page.evaluate("undo()")
         settled_reviews(23)
         check("undo converges", text("correct") == "22")
         check("undo restores last answer", "restored" in text("last-answer"))
+        check(
+            "undo restores streak and recent history",
+            text("streak") == "22"
+            and text("good-streak") == "19"
+            and page.locator("#answer-timeline [role=listitem]").count() == 23,
+        )
+        page.evaluate("rate(1)")
+        settled_reviews(24)
+        check(
+            "Again starts fresh streak without erasing record",
+            text("streak") == "0" and text("best-streak") == "22" and text("good-streak") == "0",
+        )
+        page.evaluate("undo()")
+        settled_reviews(23)
+        check("undo Again restores the broken streak", text("streak") == "22")
         page.wait_for_timeout(1200)
         page.evaluate("render()")
         check(
@@ -83,6 +118,13 @@ def main() -> None:
         )
         page.evaluate("() => { cfg.theme='light'; render(); }")
         page.locator("#hud").screenshot(path=output / "light.png")
+        page.evaluate("() => { cfg.show_streak=false; cfg.show_recent_chart=false; render(); }")
+        check(
+            "insight visibility controls",
+            not page.locator("#streak-card").is_visible()
+            and not page.locator("#recent-chart").is_visible(),
+        )
+        page.evaluate("() => { cfg.show_streak=true; cfg.show_recent_chart=true; render(); }")
         page.evaluate("() => { cfg.compact=true; render(); }")
         check("compact hides footer", not page.locator(".footnote").is_visible())
         page.locator("#hud").screenshot(path=output / "compact.png")
