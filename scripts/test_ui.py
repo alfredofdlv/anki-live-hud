@@ -27,6 +27,10 @@ def main() -> None:
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.on("request", lambda request: requests.append(request.url))
         page.set_content(fixture(), wait_until="load")
+        page.evaluate(
+            "() => {window.hudCommands=[];window.pycmd=c=>hudCommands.push(c);"
+            "AnkiLiveHUD.connect();}"
+        )
 
         def check(name, condition):
             assert condition, name
@@ -42,6 +46,12 @@ def main() -> None:
             page.wait_for_timeout(400)
 
         check("empty accuracy is unavailable", text("accuracy") == "—")
+        check(
+            "native bridge receives OS motion preference",
+            page.evaluate(
+                "hudCommands.includes('hud:motion:full') && hudCommands.includes('hud:ready')"
+            ),
+        )
         for rating in [1, 2, 3, 4]:
             page.evaluate("rate", rating)
         settled_reviews(4)
@@ -80,6 +90,11 @@ def main() -> None:
         check("disabled animations update immediately", text("reviews") == "24")
         check("disabled animations clear deltas", not page.locator(".delta.shown").count())
         page.emulate_media(reduced_motion="reduce")
+        page.wait_for_function("hudCommands.includes('hud:motion:reduce')")
+        check(
+            "OS motion changes reach native feedback",
+            page.evaluate("hudCommands.includes('hud:motion:reduce')"),
+        )
         page.evaluate("() => { cfg.animations=true; render(); rate(4); }")
         check("OS reduced motion updates immediately", text("reviews") == "25")
         check(

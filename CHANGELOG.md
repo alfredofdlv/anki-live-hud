@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0-rc.1 — 2026-10-26 (development preview)
+
+- Add a prominent native feedback layer over the review area after each committed rating.
+- Animated pop-in medal, +1 review, selected rating, progress ring and daily-goal bar.
+- Gold milestone/goal variants derived from real review counts, without XP or rating bonuses.
+- Keep one interruptible layer during rapid answers; never capture mouse clicks or keyboard focus.
+- Add an impact feedback switch and adjustable 1.2–5 second duration (default 2.4 seconds).
+- Preserve a stationary notification under Anki/OS reduced motion and disabled animations.
+- Dismiss stale rewards on undo, profile changes and reviewer exit.
+- Make native installation/evidence tooling choose the exact versioned package.
+
 ## 0.1.0-rc.1 — 2026-10-23
 
 Initial release candidate.

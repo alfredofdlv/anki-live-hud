@@ -7,5 +7,7 @@
   "animations": true,
   "compact": false,
   "theme": "auto",
-  "show_distribution": true
+  "show_distribution": true,
+  "answer_feedback": true,
+  "feedback_duration": 2400
 }

@@ -111,6 +111,9 @@
     previous = { ...stats };
   }
   motionPreference.addEventListener("change", () => {
+    if (typeof pycmd === "function") {
+      pycmd("hud:motion:" + (motionPreference.matches ? "reduce" : "full"));
+    }
     root.dataset.motion = String(Boolean(motion()));
     if (!motion()) {
       clearFeedback();
@@ -125,7 +128,12 @@
   });
   window.AnkiLiveHUD = {
     update,
-    connect: () => { if (typeof pycmd === "function") pycmd("hud:ready"); },
+    connect: () => {
+      if (typeof pycmd === "function") {
+        pycmd("hud:motion:" + (motionPreference.matches ? "reduce" : "full"));
+        pycmd("hud:ready");
+      }
+    },
     setStatus: message => { byId("status").textContent = message; },
   };
 })();

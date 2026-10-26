@@ -23,7 +23,8 @@ def main() -> None:
     unit = {key: int(suite.attrib[key]) for key in ("tests", "failures", "errors", "skipped")}
     unit["outcome"] = "passed"
     (evidence / "unit.json").write_text(json.dumps(unit, indent=2) + "\n", encoding="utf-8")
-    package = next((ROOT / "dist").glob("*.ankiaddon"))
+    manifest = json.loads((ROOT / "addon/manifest.json").read_text(encoding="utf-8"))
+    package = ROOT / "dist" / f"anki-live-hud-{manifest['version']}.ankiaddon"
     artifact = {
         "file": package.name,
         "sha256": hashlib.sha256(package.read_bytes()).hexdigest(),

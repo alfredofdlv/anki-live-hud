@@ -125,10 +125,14 @@ def run() -> None:
                 check("settings survive restart", hud.config["daily_goal"] == 4)
                 check("resized width survives restart", hud.config["width"] == 340)
             elif phase == "finish":
-                mw.web.setFocus()
-                QTest.keyClick(mw.web.focusProxy() or mw.web, Qt.Key.Key_Space)
+                # Wait for and click the real button after this separate application
+                # launch; Windows may not grant foreground shortcut activation yet.
+                await wait(lambda: mw.reviewer.bottom.web._domDone, "final card buttons ready")
+                await click(mw.reviewer.bottom.web, "#ansbut")
                 await wait(lambda: mw.reviewer.state == "answer", "final card reveal")
-                QTest.keyClick(mw.web.focusProxy() or mw.web, Qt.Key.Key_4)
+                await wait(lambda: mw.reviewer._states_mutated, "final scheduling states")
+                await settle(0.08)
+                await click(mw.reviewer.bottom.web, 'button[onclick*="ease4"]')
                 await wait(lambda: mw.state == "overview", "natural end of study queue")
                 check("exhausted queue hides dock safely", not hud.dock.isVisible())
                 mw.col.decks.set_current(mw.col.decks.id("Everyday English"))
@@ -152,6 +156,15 @@ def run() -> None:
                         f"keyboard rating {rating}",
                     )
                     check(f"keyboard rating {rating}", hud.snapshot["last_rating"] == rating)
+                    check(f"impact visible for rating {rating}", hud.feedback.isVisible())
+                    check(
+                        "impact does not intercept clicks",
+                        hud.feedback.testAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents),
+                    )
+                    check(
+                        "impact cannot take keyboard focus",
+                        hud.feedback.focusPolicy() == Qt.FocusPolicy.NoFocus,
+                    )
                     check(
                         f"remaining matches Anki after rating {rating}",
                         hud.snapshot["remaining"] == sum(mw.col.sched.counts()),
@@ -164,11 +177,23 @@ def run() -> None:
                 check("accuracy 75 percent", hud.snapshot["accuracy"] == 75)
                 check("goal reached", hud.snapshot["progress"] == 100)
                 check(
+                    "goal medal comes from committed totals",
+                    hud.feedback.details["headline"] == "DAILY GOAL COMPLETE",
+                )
+                feedback_identity = id(hud.feedback)
+                check(
                     "document persists across cards",
                     await js(hud.web, "window.__hudIdentity") == identity,
                 )
                 await capture("reviewer-answered-dark")
+                mw.grab().save(str(output / "impact-goal-dark.png"))
                 for count in range(5, 9):
+                    if count == 7:
+                        mw.pm.set_reduce_motion(True)
+                        aqt.gui_hooks.body_classes_need_update()
+                    elif count == 8:
+                        mw.pm.set_reduce_motion(False)
+                        hud.save_config({**hud.config, "answer_feedback": False})
                     await wait(lambda: mw.reviewer.state == "question", "next card")
                     await click(mw.reviewer.bottom.web, "#ansbut")
                     await wait(lambda: mw.reviewer.state == "answer", "mouse reveal")
@@ -177,12 +202,33 @@ def run() -> None:
                     await click(mw.reviewer.bottom.web, 'button[onclick*="ease3"]')
                     await wait(lambda count=count: hud.snapshot["reviews"] == count, "mouse rating")
                     if count == 5:
-                        for _ in range(12):
+                        for index in range(40):
                             frames.append(mw.grab().toImage())
-                            await settle(0.045)
+                            if index == 5:
+                                mw.grab().save(str(output / "impact-answer-dark.png"))
+                            await settle(0.07)
+                        check(
+                            "impact expires without blocking next card",
+                            not hud.feedback.isVisible(),
+                        )
+                    elif count == 6:
+                        check(
+                            "rapid answers reuse one overlay", id(hud.feedback) == feedback_identity
+                        )
+                    elif count == 7:
+                        check("reduced motion keeps impact visible", hud.feedback.isVisible())
+                        check("reduced motion stops native animation", not hud.feedback.animated)
+                        await capture("impact-reduced-motion.png")
+                    elif count == 8:
+                        check(
+                            "feedback switch leaves sidebar running",
+                            not hud.feedback.isVisible() and hud.dock.isVisible(),
+                        )
+                hud.save_config({**hud.config, "answer_feedback": True})
                 check("rapid actual mouse ratings", hud.snapshot["reviews"] == 8)
                 mw.undo()
                 await wait(lambda: hud.snapshot["reviews"] == 7, "undo")
+                check("undo dismisses stale reward", not hud.feedback.isVisible())
                 check("undo accuracy restored", abs(hud.snapshot["accuracy"] - 600 / 7) < 0.001)
                 await settle()
                 check(
@@ -276,7 +322,7 @@ def run() -> None:
                 # Exercise the actual Anki package installer on this isolated add-on.
                 from aqt.addons import InstallOk
 
-                package = next((Path(os.environ["HUD_TEST_ROOT"]) / "dist").glob("*.ankiaddon"))
+                package = Path(os.environ["HUD_TEST_PACKAGE"])
                 installed = mw.addonManager.install(str(package))
                 check(
                     "package accepted by native installer",

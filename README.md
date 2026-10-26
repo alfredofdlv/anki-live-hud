@@ -1,5 +1,13 @@
 # Anki Live HUD
 
+**Development preview: v0.2.0-rc.1 — impact feedback.** Each committed answer now
+triggers a prominent, mouse-transparent native medal over the review area, with
+a pop-in animation, +1 review, selected rating and real daily-goal progress for
+2.4 seconds. The original published v0.1.0-rc.1 below has only the quiet sidebar.
+See [impact feedback details and installation](docs/impact-feedback.md).
+
+![New native impact animation](docs/images/impact-feedback.gif)
+
 **Small steps. Visible progress.**
 
 A persistent, animated statistics sidebar for the native Anki Desktop reviewer.
