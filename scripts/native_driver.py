@@ -218,7 +218,7 @@ def run() -> None:
                     elif count == 7:
                         check("reduced motion keeps impact visible", hud.feedback.isVisible())
                         check("reduced motion stops native animation", not hud.feedback.animated)
-                        await capture("impact-reduced-motion.png")
+                        await capture("impact-reduced-motion")
                     elif count == 8:
                         check(
                             "feedback switch leaves sidebar running",
